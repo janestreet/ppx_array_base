@@ -87,7 +87,29 @@ let extensions t =
   rule t ~implementation ~interface
 ;;
 
-let attributes t = []
+let attributes t =
+  let implementation ~name ~f =
+    Context_free.Rule.attr_str_floating_expect
+      (Attribute.Floating.declare
+         name
+         Attribute.Floating.Context.structure_item
+         (let open Ast_pattern in
+          pstr __)
+         (fun x -> x))
+      (fun ~ctxt:_ _ -> f none Context.Base ~overwrite_output_kinds:None)
+  in
+  let interface ~name ~f =
+    Context_free.Rule.attr_sig_floating_expect
+      (Attribute.Floating.declare
+         name
+         Attribute.Floating.Context.signature_item
+         (let open Ast_pattern in
+          pstr __)
+         (fun x -> x))
+      (fun ~ctxt:_ _ -> [ f none Context.Base ~overwrite_output_kinds:None ])
+  in
+  rule t ~implementation ~interface
+;;
 
 module For_deriving = struct
   type function_ = t

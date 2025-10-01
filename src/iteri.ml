@@ -22,7 +22,7 @@ let implementation loc context ~overwrite_output_kinds =
       ~function_name:name
       ~function_implementation:(fun ~input_type ~output_type:(_ : core_type) ->
         [%expr
-          fun (t : [%t input_type] array) ~(f : _ -> _ -> _) ->
+          fun (t : [%t input_type] array) ~(f : (_ -> _ -> _) @ local) ->
             for i = 0 to [%e runtime_fun "length"] t - 1 do
               f i ([%e runtime_fun "unsafe_get"] t i)
             done])
@@ -42,5 +42,5 @@ let interface loc context ~overwrite_output_kinds =
     loc
     ~function_name:name
     ~function_type:(fun ~input_type ~output_type:(_ : core_type) ->
-      [%type: [%t input_type] array -> f:(int -> [%t input_type] -> unit) -> unit])
+      [%type: [%t input_type] array -> f:(int -> [%t input_type] -> unit) @ local -> unit])
 ;;
