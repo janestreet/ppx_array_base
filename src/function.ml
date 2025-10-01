@@ -24,14 +24,7 @@ let module_ : t -> (module Function_types.S) = function
   | Fold -> (module Fold)
 ;;
 
-let ghost =
-  object
-    inherit Ast_traverse.map
-    method! location l = { l with loc_ghost = true }
-  end
-;;
-
-let none = ghost#location Location.none
+let none = Ppx_helpers.ghoster#location Location.none
 let output_kinds = "output_kinds"
 
 let maybe_overwrite_output_kinds ({ ptyp_attributes; ptyp_loc; _ } as type_) =
@@ -73,8 +66,8 @@ let extensions t =
       (fun ~loc ~path:_ type_ ->
         let type_, overwrite_output_kinds = maybe_overwrite_output_kinds type_ in
         f
-          (ghost#location loc)
-          (Context.Deriving (ghost#core_type type_))
+          (Ppx_helpers.ghoster#location loc)
+          (Context.Deriving (Ppx_helpers.ghoster#core_type type_))
           ~overwrite_output_kinds)
     |> Context_free.Rule.extension
   in
@@ -86,8 +79,8 @@ let extensions t =
       (fun ~loc ~path:_ type_ ->
         let type_, overwrite_output_kinds = maybe_overwrite_output_kinds type_ in
         f
-          (ghost#location loc)
-          (Context.Deriving (ghost#core_type type_))
+          (Ppx_helpers.ghoster#location loc)
+          (Context.Deriving (Ppx_helpers.ghoster#core_type type_))
           ~overwrite_output_kinds)
     |> Context_free.Rule.extension
   in
