@@ -23,7 +23,7 @@ module Item_decorations = struct
     { input_type : core_type
     ; output_type : core_type
     ; annotations : (string loc * Ppxlib_jane.Shim.jkind_annotation option) list
-    ; kind_bindings : expression
+    ; kind_bindings : structure option
     }
 
   let annotation_and_template loc ~type_name ~kind_name kinds =
@@ -81,7 +81,11 @@ module Item_decorations = struct
       in
       List.split annotations_and_templates
     in
-    let kind_bindings = pexp_tuple ~loc templates in
+    let kind_bindings =
+      match templates with
+      | [] -> None
+      | templates -> Some [%str [%e pexp_tuple ~loc templates]]
+    in
     { input_type; output_type; annotations; kind_bindings }
   ;;
 end
@@ -107,7 +111,19 @@ let structure_item t loc ~function_name ~function_implementation =
       (function_implementation ~input_type ~output_type)
   in
   let function_name = ppat_var ~loc (Loc.make ~loc function_name) in
-  [%stri let%template [%p function_name] = [%e f] [@@kind [%e kind_bindings]]]
+  let pvb_attributes =
+    kind_bindings
+    |> Option.map ~f:(fun kind_bindings ->
+      { attr_name = Loc.make ~loc "kind"
+      ; attr_payload = PStr kind_bindings
+      ; attr_loc = loc
+      })
+    |> Option.to_list
+  in
+  let value_binding =
+    { (value_binding ~loc ~pat:function_name ~expr:f) with pvb_attributes }
+  in
+  [%stri [%%template [%%i pstr_value ~loc Nonrecursive [ value_binding ]]]]
 ;;
 
 let signature_item t loc ~function_name ~function_type =
@@ -138,13 +154,13 @@ let signature_item t loc ~function_name ~function_type =
       ~prim:[]
   in
   let kind_attribute =
-    attribute
-      ~loc
-      ~name:(Loc.make ~loc "kind")
-      ~payload:(PStr [ [%stri [%e kind_bindings]] ])
+    kind_bindings
+    |> Option.map ~f:(fun kind_bindings ->
+      attribute ~loc ~name:(Loc.make ~loc "kind") ~payload:(PStr kind_bindings))
+    |> Option.to_list
   in
   let sigi =
-    { value_descr with pval_attributes = kind_attribute :: value_descr.pval_attributes }
+    { value_descr with pval_attributes = kind_attribute @ value_descr.pval_attributes }
     |> psig_value ~loc
   in
   [%sigi: [%%template: [%%i sigi]]]

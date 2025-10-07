@@ -23,7 +23,9 @@ let implement_via_create loc how_to_vary_kinds ~create ~lower_bound ~runtime_fun
     ~function_name:name
     ~function_implementation:(fun ~input_type ~output_type ->
       [%expr
-        fun (t : [%t input_type] array) ~(f : _ -> _ -> _) : [%t output_type] array ->
+        fun (t : [%t input_type] array)
+          ~(f : (_ -> _ -> _) @ local)
+          : [%t output_type] array ->
           [%e function_body loc ~create ~lower_bound ~runtime_fun]])
 ;;
 
@@ -67,7 +69,7 @@ let interface loc context ~overwrite_output_kinds =
     ~function_name:name
     ~function_type:(fun ~input_type ~output_type ->
       [%type:
-        [%t input_type] array
-        -> f:(int -> [%t input_type] -> [%t output_type])
+        [%t input_type] array @ local
+        -> f:(int -> [%t input_type] -> [%t output_type]) @ local
         -> [%t output_type] array])
 ;;

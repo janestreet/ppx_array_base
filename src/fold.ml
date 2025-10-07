@@ -20,7 +20,10 @@ let implementation loc context ~overwrite_output_kinds =
       ~function_name:name
       ~function_implementation:(fun ~input_type ~output_type ->
         [%expr
-          fun (t : [%t input_type] array) ~init ~(f : _ -> _ -> _) : [%t output_type] ->
+          fun (t : [%t input_type] array)
+            ~init
+            ~(f : (_ -> _ -> _) @ local)
+            : [%t output_type] ->
             let length = [%e runtime_fun "length"] t in
             let rec loop i acc =
               if i < length
@@ -50,6 +53,6 @@ let interface loc context ~overwrite_output_kinds =
       [%type:
         [%t input_type] array
         -> init:[%t output_type]
-        -> f:([%t output_type] -> [%t input_type] -> [%t output_type])
+        -> f:([%t output_type] -> [%t input_type] -> [%t output_type]) @ local
         -> [%t output_type]])
 ;;
