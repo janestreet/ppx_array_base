@@ -43,10 +43,10 @@ let implementation loc context ~overwrite_output_kinds =
   match overwrite_output_kinds with
   | None ->
     [ implement_via_create
-        (how_to_vary_kinds ~output:(Some [%expr float64, bits32, bits64, word]))
+        (how_to_vary_kinds ~output:(Some [%expr base_non_value]))
         ~create:[%expr [%e runtime_fun "magic_create_uninitialized"] ~len]
         ~lower_bound:[%expr 0]
-    ; safe_implementation ~output_kinds:[%expr value, immediate, immediate64]
+    ; safe_implementation ~output_kinds:[%expr value_with_imm]
     ]
   | Some output_kinds -> [ safe_implementation ~output_kinds ]
 ;;
