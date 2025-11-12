@@ -16,6 +16,10 @@ type t =
     library. *)
 val base_layouts : location -> expression
 
+(** [base_or_null_layouts] are the common, non-product layouts, using [value_or_null]
+    instead of [value]. *)
+val base_or_null_layouts : location -> expression
+
 (** {[
        let%template function_name : input_type ... -> = f
        [@@kinds __]

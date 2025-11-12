@@ -26,12 +26,20 @@ module Item_decorations = struct
     ; kind_bindings : structure option
     }
 
-  let annotation_and_template loc ~type_name ~kind_name kinds =
+  let annotation_and_template loc ~type_name ~kind_name ~mod_separable kinds =
     let annotation =
-      ( Loc.make ~loc type_name
-      , Some
-          ({ pjkind_loc = loc; pjkind_desc = Abbreviation kind_name }
-           : Ppxlib_jane.Shim.jkind_annotation) )
+      let kind_annot : Ppxlib_jane.Shim.jkind_annotation =
+        let kind : Ppxlib_jane.Shim.jkind_annotation =
+          { pjkind_loc = loc; pjkind_desc = Pjk_abbreviation kind_name }
+        in
+        if not mod_separable
+        then kind
+        else
+          { pjkind_loc = loc
+          ; pjkind_desc = Pjk_mod (kind, [ { loc; txt = Mode "separable" } ])
+          }
+      in
+      Loc.make ~loc type_name, Some kind_annot
     in
     let template =
       [%expr [%e pexp_ident ~loc (Loc.make ~loc (Lident kind_name))] = [%e kinds]]
@@ -61,7 +69,12 @@ module Item_decorations = struct
         let input_type_name = "a" in
         let input_type = make_type_variable ~loc input_type_name in
         let input_kind_info =
-          annotation_and_template loc ~type_name:input_type_name ~kind_name:"ki" kinds
+          annotation_and_template
+            loc
+            ~type_name:input_type_name
+            ~kind_name:"ki"
+            ~mod_separable:true
+            kinds
         in
         (input_type, Some input_kind_info), "b"
     in
@@ -76,6 +89,7 @@ module Item_decorations = struct
                 loc
                 ~type_name:output_type_name
                 ~kind_name:"ko"
+                ~mod_separable:false
                 kinds
             ]
       in
@@ -90,9 +104,8 @@ module Item_decorations = struct
   ;;
 end
 
-let base_layouts loc =
-  [%expr value, immediate, immediate64, float64, bits32, bits64, word]
-;;
+let base_layouts loc = [%expr base_with_imm]
+let base_or_null_layouts loc = [%expr base_or_null_with_imm]
 
 let structure_item t loc ~function_name ~function_implementation =
   (* In the implementation, we introduce LATs, and so the inputs/outputs are syntactically

@@ -12,7 +12,7 @@ let implementation loc context ~overwrite_output_kinds =
   let how_to_vary_kinds =
     Context.how_to_vary_kinds
       context
-      ~input:(How_to_vary_kinds.base_layouts loc)
+      ~input:(How_to_vary_kinds.base_or_null_layouts loc)
       ~output:None
   in
   let runtime_fun = Context.runtime_fun context loc in
@@ -34,7 +34,7 @@ let interface loc context ~overwrite_output_kinds =
   let how_to_vary_kinds =
     Context.how_to_vary_kinds
       context
-      ~input:(How_to_vary_kinds.base_layouts loc)
+      ~input:(How_to_vary_kinds.base_or_null_layouts loc)
       ~output:None
   in
   How_to_vary_kinds.signature_item
