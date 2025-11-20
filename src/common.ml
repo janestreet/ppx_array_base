@@ -26,7 +26,7 @@ let mapper table =
       match Ppxlib_jane.Shim.Core_type_desc.of_parsetree desc with
       | Ptyp_var (name, jkind_annotation) ->
         (* If multiple different jkinds are given, pick one arbitrarily and let the
-             compiler error if they are incompatible *)
+           compiler error if they are incompatible *)
         let new_name, jkind_annotation' =
           Hashtbl.find_or_add table name ~default:(fun () ->
             gen_symbol ~prefix:"x" (), jkind_annotation)
