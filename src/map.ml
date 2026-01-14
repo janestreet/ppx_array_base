@@ -48,7 +48,7 @@ let implementation loc context ~overwrite_output_kinds =
         (how_to_vary_kinds ~output:(Some [%expr base_non_value]))
         ~create:[%expr [%e runtime_fun "magic_create_uninitialized"] ~len]
         ~lower_bound:[%expr 0]
-    ; safe_implementation ~output_kinds:[%expr value_with_imm]
+    ; safe_implementation ~output_kinds:[%expr value, value mod external64]
     ]
   | Some output_kinds -> [ safe_implementation ~output_kinds ]
 ;;

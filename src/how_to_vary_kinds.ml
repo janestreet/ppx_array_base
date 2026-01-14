@@ -104,8 +104,8 @@ module Item_decorations = struct
   ;;
 end
 
-let base_layouts loc = [%expr base_with_imm]
-let base_or_null_layouts loc = [%expr base_or_null_with_imm]
+let base_layouts loc = [%expr base, value mod external64]
+let base_or_null_layouts loc = [%expr base_or_null, value mod external64]
 
 let structure_item t loc ~function_name ~function_implementation =
   (* In the implementation, we introduce LATs, and so the inputs/outputs are syntactically
