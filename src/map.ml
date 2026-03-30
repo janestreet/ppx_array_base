@@ -29,7 +29,10 @@ let implement_via_create loc how_to_vary_kinds ~create ~lower_bound ~runtime_fun
 
 let implementation loc context ~overwrite_output_kinds =
   let how_to_vary_kinds =
-    Context.how_to_vary_kinds context ~input:(How_to_vary_kinds.base_layouts loc)
+    Context.how_to_vary_kinds
+      context
+      ~input:(How_to_vary_kinds.base_layouts loc)
+      ~output_separable:true
   in
   let runtime_fun = Context.runtime_fun context loc in
   let implement_via_create = implement_via_create loc ~runtime_fun in
@@ -46,7 +49,8 @@ let implementation loc context ~overwrite_output_kinds =
         (how_to_vary_kinds ~output:(Some [%expr base_non_value]))
         ~create:[%expr [%e runtime_fun "magic_create_uninitialized"] ~len]
         ~lower_bound:[%expr 0]
-    ; safe_implementation ~output_kinds:[%expr value, value mod external64]
+    ; safe_implementation
+        ~output_kinds:[%expr value_or_null, value_or_null mod external64]
     ]
   | Some output_kinds -> [ safe_implementation ~output_kinds ]
 ;;
@@ -60,6 +64,7 @@ let interface loc context ~overwrite_output_kinds =
       context
       ~input:(How_to_vary_kinds.base_layouts loc)
       ~output:(Some output)
+      ~output_separable:true
   in
   How_to_vary_kinds.signature_item
     how_to_vary_kinds

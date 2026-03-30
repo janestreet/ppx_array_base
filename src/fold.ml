@@ -13,6 +13,7 @@ let implementation loc context ~overwrite_output_kinds =
       context
       ~input:(How_to_vary_kinds.base_layouts loc)
       ~output:(Some output)
+      ~output_separable:false
   in
   [ How_to_vary_kinds.structure_item
       how_to_vary_kinds
@@ -41,6 +42,7 @@ let interface loc context ~overwrite_output_kinds =
       context
       ~input:(How_to_vary_kinds.base_layouts loc)
       ~output:(Some output)
+      ~output_separable:false
   in
   How_to_vary_kinds.signature_item
     how_to_vary_kinds
