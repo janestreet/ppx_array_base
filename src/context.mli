@@ -12,4 +12,5 @@ val how_to_vary_kinds
   :  t
   -> input:expression
   -> output:expression option
+  -> output_separable:bool
   -> How_to_vary_kinds.t
