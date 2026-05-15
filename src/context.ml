@@ -5,14 +5,16 @@ type t =
   | Base
   | Deriving of core_type
 
-let runtime_fun t loc label =
+let runtime_ident t label =
   let longident =
     match t with
     | Base -> label
     | Deriving _ -> "Ppx_array_runtime." ^ label
   in
-  pexp_ident ~loc (Loc.make ~loc (Longident.parse longident))
+  Longident.parse longident
 ;;
+
+let runtime_fun t loc label = pexp_ident ~loc (Loc.make ~loc (runtime_ident t label))
 
 let how_to_vary_kinds t ~input ~output ~output_separable : How_to_vary_kinds.t =
   let input : _ How_to_vary_kinds.Whether_to_vary.t =
