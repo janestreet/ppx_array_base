@@ -30,7 +30,9 @@ module Item_decorations = struct
     let annotation =
       let kind_annot : Ppxlib_jane.Shim.jkind_annotation =
         let kind : Ppxlib_jane.Shim.jkind_annotation =
-          { pjka_loc = loc; pjka_desc = Pjk_abbreviation { txt = Lident kind_name; loc } }
+          { pjka_loc = loc
+          ; pjka_desc = Pjk_abbreviation ({ txt = Lident kind_name; loc }, [])
+          }
         in
         if not mod_separable
         then kind
