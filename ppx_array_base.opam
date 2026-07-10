@@ -15,9 +15,12 @@ depends: [
   "ppx_helpers"
   "ppxlib_jane"
   "dune"        {>= "3.17.0"}
-  "ppxlib"      {= "0.33.0+ox"}
+  "ppxlib"      {>= "0.33.0" & < "0.36.0"}
 ]
 available: arch != "x86_32"
+conflicts: [
+  "oxcaml-compiler" {< "5.2.0minus39"}
+]
 synopsis: "Defines array functions used in [Base.Array]."
 description: "
 This PPX defines array functions used in [Base.Array] via attribute expansion. It also contains the expansion code for [ppx_array], which registers the deriving and extension PPXes.
