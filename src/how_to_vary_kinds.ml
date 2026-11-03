@@ -30,9 +30,7 @@ module Item_decorations = struct
     let annotation =
       let kind_annot : Ppxlib_jane.Shim.jkind_annotation =
         let kind : Ppxlib_jane.Shim.jkind_annotation =
-          { pjka_loc = loc
-          ; pjka_desc = Pjk_abbreviation ({ txt = Lident kind_name; loc }, [])
-          }
+          { pjka_loc = loc; pjka_desc = Pjk_abbreviation { txt = Lident kind_name; loc } }
         in
         if not mod_separable
         then kind
@@ -137,7 +135,7 @@ let structure_item t loc ~function_name ~function_implementation =
   let value_binding =
     { (value_binding ~loc ~pat:function_name ~expr:f) with pvb_attributes }
   in
-  [%stri [%%template [%%i pstr_value ~loc Nonrecursive [ value_binding ]]]]
+  [%stri [%%i pstr_value ~loc Nonrecursive [ value_binding ]]]
 ;;
 
 let signature_item t loc ~function_name ~function_type =
@@ -177,5 +175,5 @@ let signature_item t loc ~function_name ~function_type =
     { value_descr with pval_attributes = kind_attribute @ value_descr.pval_attributes }
     |> psig_value ~loc
   in
-  [%sigi: [%%template: [%%i sigi]]]
+  [%sigi: [%%i sigi]]
 ;;

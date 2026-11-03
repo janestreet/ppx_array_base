@@ -51,7 +51,11 @@ let map_type_variables core_type =
   let table = Hashtbl.create 2 in
   let mapper = mapper table in
   let core_type = mapper#core_type core_type in
-  core_type, table |> Hashtbl.to_seq_values |> List.of_seq
+  ( core_type
+  , table
+    |> Hashtbl.to_seq_values
+    |> List.of_seq
+    |> List.sort ~cmp:(fun (name1, _) (name2, _) -> String.compare name1 name2) )
 ;;
 
 let map_type_decl_variables decl =
